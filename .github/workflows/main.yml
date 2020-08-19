@@ -20,5 +20,6 @@ jobs:
         env:
           TZ: Asia/Shanghai
         run: |
+          echo "" > ~/.testing.yml
           make test
           bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN}}
