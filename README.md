@@ -1,4 +1,4 @@
-## 单元测试辅助工具包
+## Golang unit testing tools
 
 <a href="https://github.com/goapt/test/actions"><img src="https://github.com/goapt/test/workflows/build/badge.svg" alt="Build Status"></a>
 <a href="https://codecov.io/gh/goapt/test"><img src="https://codecov.io/gh/goapt/test/branch/master/graph/badge.svg" alt="codecov"></a>
@@ -11,7 +11,8 @@
 go get github.com/goapt/test
 ```
 
-然后在单元测试中使用
+### HTTP Mock
+
 ```go
 var httpSuites = []test.HttpClientSuite{
     {
@@ -40,4 +41,20 @@ func TestLoginHandle(t *testing.T) {
 		require.Equal(t, "xxxxxxxxx", resp.GetJsonBody("data.access_token").String())
 	})
 }
+```
+
+### Redis memory server
+Based on the [github.com/alicebob/miniredis](https://github.com/alicebob/miniredis)
+
+```go
+rds := test.NewRedis()
+```
+
+### Gee handler test
+
+```go
+req := test.NewRequest("/test", func(c *gee.Context) gee.Response {
+    return c.String("ok")
+})
+
 ```
