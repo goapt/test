@@ -16,30 +16,20 @@ go get github.com/goapt/test
 ```go
 var httpSuites = []test.HttpClientSuite{
     {
-        URI: "*",
-        ResponseBody: fmt.Sprintf(
-            `{"retcode":200,"data":{"user_id":"%s","nickname":"%s","realname":"%s","organization":"dev"}}`,
-            "test@test.cn", "test", "张三",
-        ),
+        URI: "/test",
+        ResponseBody: `{"retcode":200}`,
     },
 }
 
 func TestLoginHandle(t *testing.T) {
-	dbunit.Run(t, example.Schema(), func(t *testing.T, db *gosql.DB) {
-		httpClient := test.NewHttpClientSuite(httpSuites)
-
-		mockLogin := &service.Login{
-			HttpClient: httpClient,
-		}
-
-		handle := handler.NewLogin(repo.NewUsers(db), mockLogin, test.NewRedis())
-
-		req := test.NewRequest("/open/login", handle.Login)
-		resp, err := req.JSON(map[string]interface{}{"type": "token", "ticket": "123123"})
-		require.NoError(t, err)
-		require.Equal(t, int64(response.SuccessCode), resp.GetJsonBody("code").Int())
-		require.Equal(t, "xxxxxxxxx", resp.GetJsonBody("data.access_token").String())
-	})
+	httpClient := test.NewHttpClientSuite(httpSuites)
+    resp, err :=  httpClient.Post("https://dummy.impl/test",test.JsonContentType,strings.NewReader(""))
+    assert.NoError(t, err)
+    if err == nil {
+        body, err := ioutil.ReadAll(resp.Body)
+        assert.NoError(t, err)
+        assert.Equal(t, `{"retcode":200}`, string(body))
+    }
 }
 ```
 
