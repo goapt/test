@@ -12,7 +12,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"github.com/goapt/gee"
 	"github.com/tidwall/gjson"
 )
@@ -140,7 +139,7 @@ func (r *Request) doRequest(method string, contentType string, body io.Reader) (
 	}
 	fmt.Println("------------------------------ request end --------------------------------")
 
-	gin.SetMode(gin.TestMode)
+	gee.SetMode(gee.TestMode)
 	h := gee.Default()
 
 	routePath := r.path
@@ -179,8 +178,12 @@ func (r *Response) GetBodyString() string {
 	return string(r.GetBody())
 }
 
-func (r *Response) GetJsonBody(path string) gjson.Result {
+func (r *Response) GetJsonPath(path string) gjson.Result {
 	return gjson.GetBytes(r.GetBody(), path)
+}
+
+func (r *Response) GetJson() gjson.Result {
+	return gjson.ParseBytes(r.GetBody())
 }
 
 func indentJson(data interface{}) string {
